@@ -514,7 +514,15 @@ import Layout from '../layouts/Layout.astro';
 				body: formData
 			});
 			
-			const result = await response.json();
+			const responseClone = response.clone();
+			let result: any = null;
+			let rawText = '';
+			
+			try {
+				result = await response.json();
+			} catch (parseError) {
+				rawText = await responseClone.text();
+			}
 			
 			if (response.ok) {
 				mostrarMensaje('¡Recibo enviado exitosamente!', 'success');
@@ -525,9 +533,11 @@ import Layout from '../layouts/Layout.astro';
 				facturasCount = 0;
 				calcularTotales();
 			} else {
-				mostrarMensaje(`Error: ${result.error || 'No se pudo enviar el recibo'}`, 'error');
+				const errorMessage = result?.error || rawText || `No se pudo enviar el recibo (status ${response.status})`;
+				mostrarMensaje(`Error: ${errorMessage}`, 'error');
 			}
 		} catch (error) {
+			console.error('Error enviando recibo:', error);
 			mostrarMensaje('Error de conexión. Por favor, intente nuevamente.', 'error');
 		} finally {
 			submitBtn.disabled = false;
