@@ -1,11 +1,550 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
 <Layout>
-	<Welcome />
+	<div class="container mx-auto px-4 py-8 max-w-4xl">
+		<header class="text-center mb-12 animate-[fadeIn_0.6s_ease-out]">
+			<h1 class="text-5xl md:text-6xl font-bold text-slate-900 mb-3 tracking-tight">
+				Alfaparf Milano
+			</h1>
+			<p class="text-lg text-slate-600 font-medium">Sistema de Registro de Recibos</p>
+		</header>
+
+		<form id="reciboForm" class="space-y-8">
+			<!-- Sección 1: Información del Recibo -->
+			<section class="bg-white rounded-2xl shadow-lg p-8 border border-slate-200 animate-[slideUp_0.6s_ease-out_0.1s_both]">
+				<h2 class="text-2xl font-bold text-slate-900 mb-6 pb-3 border-b-2 border-slate-900">
+					1. Información del Recibo
+				</h2>
+				
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+					<div>
+						<label for="numeroRecibo" class="block text-sm font-semibold text-slate-700 mb-2">
+							Número de Recibo <span class="text-red-600">*</span>
+						</label>
+						<input
+							type="number"
+							id="numeroRecibo"
+							name="numeroRecibo"
+							required
+							min="90001"
+							class="w-full px-4 py-3 rounded-lg border-2 border-slate-300 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/20 outline-none transition-all text-lg"
+							placeholder="Ej: 90001"
+						/>
+						<p class="text-xs text-slate-500 mt-1">Debe ser mayor a 90000</p>
+					</div>
+
+					<div>
+						<label for="nombreVendedor" class="block text-sm font-semibold text-slate-700 mb-2">
+							Nombre del Vendedor <span class="text-red-600">*</span>
+						</label>
+						<input
+							type="text"
+							id="nombreVendedor"
+							name="nombreVendedor"
+							required
+							class="w-full px-4 py-3 rounded-lg border-2 border-slate-300 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/20 outline-none transition-all text-lg"
+							placeholder="Ej: Juan Pérez"
+						/>
+					</div>
+
+					<div>
+						<label for="nombreCliente" class="block text-sm font-semibold text-slate-700 mb-2">
+							Nombre del Cliente <span class="text-red-600">*</span>
+						</label>
+						<input
+							type="text"
+							id="nombreCliente"
+							name="nombreCliente"
+							required
+							pattern="[A-Za-zÀ-ÿ0-9][A-Za-zÀ-ÿ0-9\s\.\,\-\&\(\)]+"
+							class="w-full px-4 py-3 rounded-lg border-2 border-slate-300 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/20 outline-none transition-all text-lg"
+							placeholder="Ej: María González"
+						/>
+					</div>
+
+					<div>
+						<label for="rut" class="block text-sm font-semibold text-slate-700 mb-2">
+							RUT <span class="text-slate-500 text-xs">(RUT o SAP requerido)</span>
+						</label>
+						<input
+							type="text"
+							id="rut"
+							name="rut"
+							class="w-full px-4 py-3 rounded-lg border-2 border-slate-300 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/20 outline-none transition-all text-lg"
+							placeholder="Ej: 12.345.678-9"
+						/>
+						<p id="rutError" class="text-xs text-red-600 mt-1 hidden">RUT inválido</p>
+					</div>
+
+					<div>
+						<label for="sap" class="block text-sm font-semibold text-slate-700 mb-2">
+							SAP <span class="text-slate-500 text-xs">(RUT o SAP requerido)</span>
+						</label>
+						<input
+							type="text"
+							id="sap"
+							name="sap"
+							maxlength="9"
+							pattern="\d{9}"
+							class="w-full px-4 py-3 rounded-lg border-2 border-slate-300 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/20 outline-none transition-all text-lg"
+							placeholder="Ej: 123456789"
+						/>
+						<p class="text-xs text-slate-500 mt-1">Exactamente 9 dígitos</p>
+					</div>
+				</div>
+			</section>
+
+			<!-- Sección 2: Descripción del Pago -->
+			<section class="bg-white rounded-2xl shadow-lg p-8 border border-slate-200 animate-[slideUp_0.6s_ease-out_0.2s_both]">
+				<h2 class="text-2xl font-bold text-slate-900 mb-6 pb-3 border-b-2 border-slate-900">
+					2. Descripción del Pago
+				</h2>
+				
+				<div class="mb-6">
+					<label for="montoTotal" class="block text-sm font-semibold text-slate-700 mb-2">
+						Monto Total del Recibo <span class="text-red-600">*</span>
+					</label>
+					<div class="relative">
+						<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">$</span>
+						<input
+							type="text"
+							id="montoTotal"
+							name="montoTotal"
+							required
+							class="w-full pl-8 pr-4 py-3 rounded-lg border-2 border-slate-300 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/20 outline-none transition-all text-lg font-semibold"
+							placeholder="0"
+						/>
+					</div>
+					<p class="text-xs text-slate-500 mt-1">Formato: CLP</p>
+				</div>
+
+				<div class="mb-4">
+					<label class="block text-sm font-semibold text-slate-700 mb-3">
+						Formas de Pago <span class="text-red-600">*</span>
+					</label>
+					<p class="text-xs text-slate-500 mb-4">La suma de todos los pagos debe ser igual al monto total</p>
+				</div>
+
+				<div id="formasPagoContainer" class="space-y-4 mb-4">
+				</div>
+
+				<button
+					type="button"
+					id="agregarFormaPago"
+					class="w-full py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-900 font-semibold rounded-lg transition-colors border-2 border-dashed border-slate-300 hover:border-slate-400"
+				>
+					+ Agregar Forma de Pago
+				</button>
+
+				<div class="mt-4 p-4 bg-slate-50 rounded-lg">
+					<p class="text-sm font-semibold text-slate-700">
+						Total de Pagos: <span id="totalPagos" class="text-slate-900">$0</span>
+					</p>
+				</div>
+			</section>
+
+			<!-- Sección 3: Información del Pago (Facturas) -->
+			<section class="bg-white rounded-2xl shadow-lg p-8 border border-slate-200 animate-[slideUp_0.6s_ease-out_0.3s_both]">
+				<h2 class="text-2xl font-bold text-slate-900 mb-6 pb-3 border-b-2 border-slate-900">
+					3. Información del Pago (Facturas)
+				</h2>
+				
+				<p class="text-sm text-slate-600 mb-6">
+					Indique las facturas que se están pagando o abonando con este recibo. La suma debe coincidir con el monto total.
+				</p>
+
+				<div id="facturasContainer" class="space-y-4 mb-4">
+				</div>
+
+				<button
+					type="button"
+					id="agregarFactura"
+					class="w-full py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-900 font-semibold rounded-lg transition-colors border-2 border-dashed border-slate-300 hover:border-slate-400"
+				>
+					+ Agregar Factura
+				</button>
+
+				<div class="mt-4 p-4 bg-slate-50 rounded-lg">
+					<p class="text-sm font-semibold text-slate-700">
+						Total Facturas: <span id="totalFacturas" class="text-slate-900">$0</span>
+					</p>
+				</div>
+			</section>
+
+			<!-- Sección 4: Imágenes -->
+			<section class="bg-white rounded-2xl shadow-lg p-8 border border-slate-200 animate-[slideUp_0.6s_ease-out_0.4s_both]">
+				<h2 class="text-2xl font-bold text-slate-900 mb-6 pb-3 border-b-2 border-slate-900">
+					4. Imágenes
+				</h2>
+				
+				<div class="space-y-6">
+					<div>
+						<label for="fotoRecibo" class="block text-sm font-semibold text-slate-700 mb-2">
+							Foto del Recibo <span class="text-red-600">*</span>
+						</label>
+						<input
+							type="file"
+							id="fotoRecibo"
+							name="fotoRecibo"
+							accept="image/*"
+							required
+							class="w-full px-4 py-3 rounded-lg border-2 border-slate-300 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/20 outline-none transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-slate-900 file:text-white file:font-semibold hover:file:bg-slate-800"
+						/>
+					</div>
+
+					<div>
+						<label for="fotosAdicionales" class="block text-sm font-semibold text-slate-700 mb-2">
+							Fotos Adicionales <span class="text-slate-500 text-xs">(Opcional)</span>
+						</label>
+						<input
+							type="file"
+							id="fotosAdicionales"
+							name="fotosAdicionales"
+							accept="image/*"
+							multiple
+							class="w-full px-4 py-3 rounded-lg border-2 border-slate-300 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/20 outline-none transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-slate-100 file:text-slate-900 file:font-semibold hover:file:bg-slate-200"
+						/>
+						<p class="text-xs text-slate-500 mt-1">Cheques, comprobantes, depósitos, etc.</p>
+					</div>
+				</div>
+			</section>
+
+			<!-- Botón de Envío -->
+			<div class="flex gap-4 animate-[slideUp_0.6s_ease-out_0.5s_both]">
+				<button
+					type="submit"
+					id="submitBtn"
+					class="flex-1 py-4 px-6 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-lg transition-all shadow-lg hover:shadow-xl text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+				>
+					Enviar Recibo
+				</button>
+			</div>
+
+			<!-- Mensajes -->
+			<div id="mensajeContainer" class="hidden">
+			</div>
+		</form>
+	</div>
 </Layout>
+
+<style>
+	@keyframes fadeIn {
+		from { opacity: 0; }
+		to { opacity: 1; }
+	}
+	
+	@keyframes slideUp {
+		from {
+			opacity: 0;
+			transform: translateY(20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+</style>
+
+<script>
+	import { validarRUT, formatearRUT, validarSAP, formatearMoneda, parsearMoneda } from '../utils/validations';
+
+	let formasPagoCount = 0;
+	let facturasCount = 0;
+
+	const formasPagoTipos = [
+		{ value: 'transferencia', label: 'Transferencia', extraFields: [] },
+		{ value: 'cheque', label: 'Cheque', extraFields: ['fechaVencimiento', 'numeroCheque'] },
+		{ value: 'mercadopago', label: 'Mercadopago', extraFields: [] },
+		{ value: 'transbank', label: 'Transbank', extraFields: [] },
+		{ value: 'webpay', label: 'Webpay', extraFields: [] },
+		{ value: 'bci', label: 'BCI Pagos', extraFields: [] },
+		{ value: 'deposito', label: 'Depósito en Banco', extraFields: [] }
+	];
+
+	function agregarFormaPago() {
+		formasPagoCount++;
+		const container = document.getElementById('formasPagoContainer')!;
+		
+		const div = document.createElement('div');
+		div.className = 'p-6 bg-slate-50 rounded-lg border-2 border-slate-200 relative';
+		div.id = `formaPago-${formasPagoCount}`;
+		
+		div.innerHTML = `
+			<button type="button" class="absolute top-4 right-4 text-slate-400 hover:text-red-600 font-bold text-xl" onclick="eliminarFormaPago(${formasPagoCount})">×</button>
+			
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+				<div class="md:col-span-2">
+					<label class="block text-sm font-semibold text-slate-700 mb-2">Tipo de Pago</label>
+					<select name="formaPago[${formasPagoCount}][tipo]" class="w-full px-4 py-3 rounded-lg border-2 border-slate-300 focus:border-slate-900 outline-none transition-all" onchange="handleTipoPagoChange(${formasPagoCount}, this.value)" required>
+						<option value="">Seleccione...</option>
+						${formasPagoTipos.map(tipo => `<option value="${tipo.value}">${tipo.label}</option>`).join('')}
+					</select>
+				</div>
+				
+				<div>
+					<label class="block text-sm font-semibold text-slate-700 mb-2">Monto <span class="text-red-600">*</span></label>
+					<div class="relative">
+						<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">$</span>
+						<input type="text" name="formaPago[${formasPagoCount}][monto]" class="monto-pago w-full pl-8 pr-4 py-3 rounded-lg border-2 border-slate-300 focus:border-slate-900 outline-none transition-all" placeholder="0" required />
+					</div>
+				</div>
+				
+				<div>
+					<label class="block text-sm font-semibold text-slate-700 mb-2">Fecha de Pago <span class="text-red-600">*</span></label>
+					<input type="date" name="formaPago[${formasPagoCount}][fecha]" class="w-full px-4 py-3 rounded-lg border-2 border-slate-300 focus:border-slate-900 outline-none transition-all" required />
+				</div>
+				
+				<div>
+					<label class="block text-sm font-semibold text-slate-700 mb-2">Nº Comprobante <span class="text-slate-500 text-xs">(Opcional)</span></label>
+					<input type="text" name="formaPago[${formasPagoCount}][comprobante]" class="w-full px-4 py-3 rounded-lg border-2 border-slate-300 focus:border-slate-900 outline-none transition-all" />
+				</div>
+				
+				<div id="extraFields-${formasPagoCount}"></div>
+			</div>
+		`;
+		
+		container.appendChild(div);
+		setupMontoInput(div.querySelector('.monto-pago')!);
+	}
+
+	function agregarFactura() {
+		facturasCount++;
+		const container = document.getElementById('facturasContainer')!;
+		
+		const div = document.createElement('div');
+		div.className = 'p-6 bg-slate-50 rounded-lg border-2 border-slate-200 relative';
+		div.id = `factura-${facturasCount}`;
+		
+		div.innerHTML = `
+			<button type="button" class="absolute top-4 right-4 text-slate-400 hover:text-red-600 font-bold text-xl" onclick="eliminarFactura(${facturasCount})">×</button>
+			
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+				<div>
+					<label class="block text-sm font-semibold text-slate-700 mb-2">Nº Factura <span class="text-red-600">*</span></label>
+					<input type="text" name="factura[${facturasCount}][numero]" class="w-full px-4 py-3 rounded-lg border-2 border-slate-300 focus:border-slate-900 outline-none transition-all" placeholder="Ej: 12345" required />
+				</div>
+				
+				<div>
+					<label class="block text-sm font-semibold text-slate-700 mb-2">Nº Cuota <span class="text-slate-500 text-xs">(Opcional)</span></label>
+					<input type="text" name="factura[${facturasCount}][cuota]" class="w-full px-4 py-3 rounded-lg border-2 border-slate-300 focus:border-slate-900 outline-none transition-all" placeholder="Ej: 2 de 6" />
+				</div>
+				
+				<div>
+					<label class="block text-sm font-semibold text-slate-700 mb-2">Monto Pagado <span class="text-red-600">*</span></label>
+					<div class="relative">
+						<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">$</span>
+						<input type="text" name="factura[${facturasCount}][monto]" class="monto-factura w-full pl-8 pr-4 py-3 rounded-lg border-2 border-slate-300 focus:border-slate-900 outline-none transition-all" placeholder="0" required />
+					</div>
+				</div>
+			</div>
+		`;
+		
+		container.appendChild(div);
+		setupMontoInput(div.querySelector('.monto-factura')!);
+	}
+
+	(window as any).handleTipoPagoChange = function(id: number, tipo: string) {
+		const extraFieldsContainer = document.getElementById(`extraFields-${id}`)!;
+		const tipoConfig = formasPagoTipos.find(t => t.value === tipo);
+		
+		if (!tipoConfig || tipoConfig.extraFields.length === 0) {
+			extraFieldsContainer.innerHTML = '';
+			return;
+		}
+		
+		let html = '';
+		if (tipoConfig.extraFields.includes('fechaVencimiento')) {
+			html += `
+				<div>
+					<label class="block text-sm font-semibold text-slate-700 mb-2">Fecha Vencimiento <span class="text-red-600">*</span></label>
+					<input type="date" name="formaPago[${id}][fechaVencimiento]" class="w-full px-4 py-3 rounded-lg border-2 border-slate-300 focus:border-slate-900 outline-none transition-all" required />
+				</div>
+			`;
+		}
+		if (tipoConfig.extraFields.includes('numeroCheque')) {
+			html += `
+				<div>
+					<label class="block text-sm font-semibold text-slate-700 mb-2">Nº Cheque <span class="text-red-600">*</span></label>
+					<input type="text" name="formaPago[${id}][numeroCheque]" class="w-full px-4 py-3 rounded-lg border-2 border-slate-300 focus:border-slate-900 outline-none transition-all" required />
+				</div>
+			`;
+		}
+		
+		extraFieldsContainer.innerHTML = html;
+	};
+
+	(window as any).eliminarFormaPago = function(id: number) {
+		document.getElementById(`formaPago-${id}`)?.remove();
+		calcularTotales();
+	};
+
+	(window as any).eliminarFactura = function(id: number) {
+		document.getElementById(`factura-${id}`)?.remove();
+		calcularTotales();
+	};
+
+	function setupMontoInput(input: HTMLInputElement) {
+		input.addEventListener('input', (e) => {
+			const target = e.target as HTMLInputElement;
+			const valor = parsearMoneda(target.value);
+			target.value = valor > 0 ? formatearMoneda(valor).replace('$', '').trim() : '';
+			calcularTotales();
+		});
+	}
+
+	function calcularTotales() {
+		let totalPagos = 0;
+		document.querySelectorAll('.monto-pago').forEach((input) => {
+			totalPagos += parsearMoneda((input as HTMLInputElement).value);
+		});
+		
+		let totalFacturas = 0;
+		document.querySelectorAll('.monto-factura').forEach((input) => {
+			totalFacturas += parsearMoneda((input as HTMLInputElement).value);
+		});
+		
+		document.getElementById('totalPagos')!.textContent = formatearMoneda(totalPagos);
+		document.getElementById('totalFacturas')!.textContent = formatearMoneda(totalFacturas);
+	}
+
+	document.getElementById('agregarFormaPago')?.addEventListener('click', agregarFormaPago);
+	document.getElementById('agregarFactura')?.addEventListener('click', agregarFactura);
+
+	const montoTotalInput = document.getElementById('montoTotal') as HTMLInputElement;
+	setupMontoInput(montoTotalInput);
+
+	const rutInput = document.getElementById('rut') as HTMLInputElement;
+	const sapInput = document.getElementById('sap') as HTMLInputElement;
+	const rutError = document.getElementById('rutError')!;
+
+	rutInput.addEventListener('blur', () => {
+		const valor = rutInput.value.trim();
+		if (valor && !validarRUT(valor)) {
+			rutError.classList.remove('hidden');
+			rutInput.classList.add('border-red-500');
+		} else {
+			rutError.classList.add('hidden');
+			rutInput.classList.remove('border-red-500');
+			if (valor) {
+				rutInput.value = formatearRUT(valor);
+			}
+		}
+	});
+
+	sapInput.addEventListener('input', () => {
+		sapInput.value = sapInput.value.replace(/\D/g, '').slice(0, 9);
+	});
+
+	document.getElementById('reciboForm')?.addEventListener('submit', async (e) => {
+		e.preventDefault();
+		
+		const rut = rutInput.value.trim();
+		const sap = sapInput.value.trim();
+		
+		if (!rut && !sap) {
+			alert('Debe ingresar al menos RUT o SAP');
+			return;
+		}
+		
+		if (rut && !validarRUT(rut)) {
+			alert('El RUT ingresado no es válido');
+			rutInput.focus();
+			return;
+		}
+		
+		if (sap && !validarSAP(sap)) {
+			alert('El SAP debe tener exactamente 9 dígitos');
+			sapInput.focus();
+			return;
+		}
+		
+		const montoTotal = parsearMoneda(montoTotalInput.value);
+		
+		if (montoTotal === 0) {
+			alert('El monto total debe ser mayor a 0');
+			return;
+		}
+		
+		const formasPagoElements = document.querySelectorAll('[id^="formaPago-"]');
+		if (formasPagoElements.length === 0) {
+			alert('Debe agregar al menos una forma de pago');
+			return;
+		}
+		
+		const facturasElements = document.querySelectorAll('[id^="factura-"]');
+		if (facturasElements.length === 0) {
+			alert('Debe agregar al menos una factura');
+			return;
+		}
+		
+		let totalPagos = 0;
+		document.querySelectorAll('.monto-pago').forEach((input) => {
+			totalPagos += parsearMoneda((input as HTMLInputElement).value);
+		});
+		
+		let totalFacturas = 0;
+		document.querySelectorAll('.monto-factura').forEach((input) => {
+			totalFacturas += parsearMoneda((input as HTMLInputElement).value);
+		});
+		
+		if (totalPagos !== montoTotal) {
+			alert(`La suma de las formas de pago (${formatearMoneda(totalPagos)}) debe ser igual al monto total (${formatearMoneda(montoTotal)})`);
+			return;
+		}
+		
+		if (totalFacturas !== montoTotal) {
+			alert(`La suma de las facturas (${formatearMoneda(totalFacturas)}) debe ser igual al monto total (${formatearMoneda(montoTotal)})`);
+			return;
+		}
+		
+		const submitBtn = document.getElementById('submitBtn') as HTMLButtonElement;
+		submitBtn.disabled = true;
+		submitBtn.textContent = 'Enviando...';
+		
+		try {
+			const formData = new FormData(e.target as HTMLFormElement);
+			
+			const response = await fetch('/api/submit', {
+				method: 'POST',
+				body: formData
+			});
+			
+			const result = await response.json();
+			
+			if (response.ok) {
+				mostrarMensaje('¡Recibo enviado exitosamente!', 'success');
+				(e.target as HTMLFormElement).reset();
+				document.getElementById('formasPagoContainer')!.innerHTML = '';
+				document.getElementById('facturasContainer')!.innerHTML = '';
+				formasPagoCount = 0;
+				facturasCount = 0;
+				calcularTotales();
+			} else {
+				mostrarMensaje(`Error: ${result.error || 'No se pudo enviar el recibo'}`, 'error');
+			}
+		} catch (error) {
+			mostrarMensaje('Error de conexión. Por favor, intente nuevamente.', 'error');
+		} finally {
+			submitBtn.disabled = false;
+			submitBtn.textContent = 'Enviar Recibo';
+		}
+	});
+
+	function mostrarMensaje(texto: string, tipo: 'success' | 'error') {
+		const container = document.getElementById('mensajeContainer')!;
+		container.className = tipo === 'success' 
+			? 'p-4 rounded-lg bg-green-100 border-2 border-green-500 text-green-900'
+			: 'p-4 rounded-lg bg-red-100 border-2 border-red-500 text-red-900';
+		container.textContent = texto;
+		container.classList.remove('hidden');
+		
+		setTimeout(() => {
+			container.classList.add('hidden');
+		}, 5000);
+	}
+
+	agregarFormaPago();
+	agregarFactura();
+</script>
