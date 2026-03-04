@@ -1,46 +1,145 @@
-# Astro Starter Kit: Basics
+# Sistema de Recibos - Alfaparf Milano
 
-```sh
-pnpm create astro@latest -- --template basics
+Plataforma web para el registro estructurado de recibos de pago por parte de vendedores. Los datos se almacenan en Google Sheets y las imágenes en Google Drive.
+
+## 🎯 Características
+
+- **Formulario completo** con 4 secciones: información del recibo, formas de pago, facturas e imágenes
+- **Validaciones robustas**: RUT chileno (módulo 11), SAP (9 dígitos), montos cuadrados
+- **Diseño empresarial**: limpio, responsivo y accesible
+- **Integración Google**: Sheets para datos + Drive para imágenes
+- **Deploy en Vercel**: SSR con Astro + adaptador serverless
+
+## 📋 Requisitos Previos
+
+1. Cuenta de Google Cloud con APIs habilitadas
+2. Google Sheet y carpeta de Drive configurados
+3. Service Account con credenciales JSON
+4. Cuenta de Vercel para deployment
+
+## 🚀 Configuración Inicial
+
+### 1. Instalar Dependencias
+
+```bash
+pnpm install
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+### 2. Configurar Google Cloud
 
-## 🚀 Project Structure
+#### Paso 2.1 — Crear Proyecto
+1. Ir a [console.cloud.google.com](https://console.cloud.google.com)
+2. Crear nuevo proyecto: `recibos-alfaparf`
 
-Inside of your Astro project, you'll see the following folders and files:
+#### Paso 2.2 — Habilitar APIs
+1. En **APIs y servicios → Biblioteca**, habilitar:
+   - Google Sheets API
+   - Google Drive API
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+#### Paso 2.3 — Crear Service Account
+1. Ir a **APIs y servicios → Credenciales**
+2. **Crear credenciales → Cuenta de servicio**
+3. Nombre: `recibos-app`
+4. En la cuenta creada → **Claves → Agregar clave → JSON**
+5. Descargar el archivo JSON
+
+#### Paso 2.4 — Configurar Google Sheet
+1. Crear un Google Sheet nuevo
+2. Copiar el ID del Sheet (de la URL)
+3. Compartir con el email de la Service Account (permisos de **Editor**)
+
+#### Paso 2.5 — Configurar Google Drive
+1. Crear carpeta en Drive para imágenes
+2. Copiar el ID de la carpeta (de la URL)
+3. Compartir con el email de la Service Account (permisos de **Editor**)
+
+### 3. Variables de Entorno
+
+Crear archivo `.env` en la raíz:
+
+```env
+GOOGLE_SERVICE_ACCOUNT_EMAIL=recibos-app@recibos-alfaparf.iam.gserviceaccount.com
+GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+GOOGLE_SHEET_ID=abc123xyz...
+GOOGLE_DRIVE_FOLDER_ID=xyz789abc...
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+**Nota**: Extraer `client_email` y `private_key` del archivo JSON descargado.
 
-## 🧞 Commands
+## 💻 Desarrollo Local
 
-All commands are run from the root of the project, from a terminal:
+```bash
+pnpm dev
+```
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
+Abrir [http://localhost:4321](http://localhost:4321)
 
-## 👀 Want to learn more?
+## 📦 Build para Producción
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+```bash
+pnpm build
+pnpm preview
+```
+
+## 🌐 Deploy en Vercel
+
+### Opción 1: CLI de Vercel
+
+```bash
+pnpm add -g vercel
+vercel
+```
+
+### Opción 2: GitHub + Vercel Dashboard
+
+1. Push del código a GitHub
+2. Importar proyecto en Vercel
+3. Configurar variables de entorno en **Settings → Environment Variables**
+
+**Variables requeridas en Vercel**:
+- `GOOGLE_SERVICE_ACCOUNT_EMAIL`
+- `GOOGLE_PRIVATE_KEY`
+- `GOOGLE_SHEET_ID`
+- `GOOGLE_DRIVE_FOLDER_ID`
+
+## 📊 Estructura de Datos en Google Sheets
+
+Las columnas del Sheet serán:
+
+| Fecha | Nº Recibo | Vendedor | Cliente | RUT | SAP | Monto Total | Formas de Pago | Facturas | Foto Recibo | Fotos Adicionales |
+|-------|-----------|----------|---------|-----|-----|-------------|----------------|----------|-------------|-------------------|
+
+## 🛠️ Tecnologías
+
+- **Astro 5** — Framework web
+- **Tailwind CSS 4** — Estilos
+- **TypeScript** — Tipado
+- **Google APIs** — Sheets + Drive
+- **Vercel** — Hosting serverless
+
+## 📝 Validaciones Implementadas
+
+- **RUT**: Validación chilena con módulo 11
+- **SAP**: Exactamente 9 dígitos numéricos
+- **RUT o SAP**: Al menos uno obligatorio
+- **Número de recibo**: Mayor a 90000
+- **Montos**: Suma de pagos = suma de facturas = monto total
+- **Formas de pago**: Al menos una requerida
+- **Facturas**: Al menos una requerida
+- **Foto recibo**: Obligatoria
+
+## 🎨 Diseño
+
+- Tipografía: **Playfair Display** (títulos) + **Inter** (cuerpo)
+- Paleta: Tonos slate con acentos oscuros
+- Animaciones: Fade-in y slide-up en carga
+- Responsivo: Mobile-first con breakpoints MD
+
+## � Soporte
+
+Para problemas o preguntas, contactar al equipo de desarrollo.
+
+---
+
+**Desarrollado por**: Henryck Guaramato  
+**Versión**: 1.0.0

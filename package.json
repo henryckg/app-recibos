@@ -1,7 +1,10 @@
 {
-  "name": "cosmic-cluster",
+  "name": "recibos-alfaparf",
   "type": "module",
   "version": "0.0.1",
+  "author": {
+    "name": "Henryck Guaramato"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -9,6 +12,14 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.17.1"
+    "@astrojs/vercel": "^9.0.4",
+    "@tailwindcss/vite": "^4.2.1",
+    "astro": "^5.17.1",
+    "cloudinary": "^2.9.0",
+    "googleapis": "^171.4.0",
+    "tailwindcss": "^4.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.3"
   }
 }
