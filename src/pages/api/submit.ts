@@ -107,8 +107,15 @@ function parseFormData(formData: FormData): any {
     }
   }
 
-  data.formasPago = Array.from(formasPagoMap.values());
-  data.facturas = Array.from(facturasMap.values());
+  const formasPagoEntries = Array.from(formasPagoMap.entries()).sort(
+    ([indexA], [indexB]) => Number(indexA) - Number(indexB)
+  );
+  const facturasEntries = Array.from(facturasMap.entries()).sort(
+    ([indexA], [indexB]) => Number(indexA) - Number(indexB)
+  );
+
+  data.formasPago = formasPagoEntries.map(([, value]) => value);
+  data.facturas = facturasEntries.map(([, value]) => value);
 
   return data;
 }
@@ -142,35 +149,40 @@ export const POST: APIRoute = async ({ request }) => {
       }
     }
 
-    const formasPagoStr = data.formasPago.map((fp: any) => {
-      let str = `${fp.tipo}: $${fp.monto} (${fp.fecha})`;
-      if (fp.comprobante) str += ` - Comp: ${fp.comprobante}`;
-      if (fp.fechaVencimiento) str += ` - Venc: ${fp.fechaVencimiento}`;
-      if (fp.numeroCheque) str += ` - Cheque: ${fp.numeroCheque}`;
-      return str;
-    }).join(' | ');
-
     const facturasStr = data.facturas.map((f: any) => {
       let str = `Fact ${f.numero}: $${f.monto}`;
       if (f.cuota) str += ` (Cuota: ${f.cuota})`;
       return str;
     }).join(' | ');
 
-    const row = [
-      new Date().toISOString(),
-      data.numeroRecibo,
-      data.nombreVendedor,
-      data.nombreCliente,
-      data.rut,
-      data.sap,
-      data.montoTotal,
-      formasPagoStr,
-      facturasStr,
-      fotoReciboUrl,
-      fotosAdicionalesUrls.join(', '),
-    ];
+    if (!data.formasPago.length) {
+      throw new Error('Debe incluir al menos una forma de pago');
+    }
 
-    await appendToSheet(auth, [row]);
+    const filas = data.formasPago.map((fp: any) => {
+      const comprobante = fp.comprobante || fp.numeroCheque || '';
+      const vencimientoCheque = fp.fechaVencimiento || '';
+
+      return [
+        new Date().toISOString(),
+        data.numeroRecibo,
+        data.nombreVendedor,
+        data.nombreCliente,
+        data.rut,
+        data.sap,
+        data.montoTotal,
+        fp.tipo || '',
+        fp.monto || '',
+        fp.fecha || '',
+        comprobante,
+        vencimientoCheque,
+        facturasStr,
+        fotoReciboUrl,
+        fotosAdicionalesUrls.join(', '),
+      ];
+    });
+
+    await appendToSheet(auth, filas);
 
     return new Response(
       JSON.stringify({ 
