@@ -75,6 +75,7 @@ async function appendToSheet(auth: any, values: any[][]): Promise<void> {
 function parseFormData(formData: FormData): any {
   const data: any = {
     numeroRecibo: formData.get('numeroRecibo'),
+    fechaRecibo: formData.get('fechaRecibo'),
     nombreVendedor: formData.get('nombreVendedor'),
     nombreCliente: formData.get('nombreCliente'),
     rut: formData.get('rut') || '',
@@ -159,13 +160,18 @@ export const POST: APIRoute = async ({ request }) => {
       throw new Error('Debe incluir al menos una forma de pago');
     }
 
+    const idRecibo = `${data.numeroRecibo}${Date.now()}`;
+    const fechaEnvio = new Date().toISOString();
+
     const filas = data.formasPago.map((fp: any) => {
       const comprobante = fp.comprobante || fp.numeroCheque || '';
       const vencimientoCheque = fp.fechaVencimiento || '';
 
       return [
-        new Date().toISOString(),
+        idRecibo,
+        fechaEnvio,
         data.numeroRecibo,
+        data.fechaRecibo,
         data.nombreVendedor,
         data.nombreCliente,
         data.rut,

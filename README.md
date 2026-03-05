@@ -112,8 +112,8 @@ vercel
 
 Las columnas del Sheet serán (una fila por forma de pago):
 
-| Fecha | Nº Recibo | Vendedor | Cliente | RUT | SAP | Monto Total | Tipo Pago | Monto Pago | Fecha Pago | Comprobante | Vencimiento Cheque | Facturas | Foto Recibo | Fotos Adicionales |
-|-------|-----------|----------|---------|-----|-----|-------------|-----------|------------|-----------|-------------|--------------------|----------|-------------|-------------------|
+| ID Recibo | Fecha Envío | Nº Recibo | Fecha Recibo | Vendedor | Cliente | RUT | SAP | Monto Total | Tipo Pago | Monto Pago | Fecha Pago | Comprobante | Vencimiento Cheque | Facturas | Foto Recibo | Fotos Adicionales |
+|-----------|-------------|-----------|--------------|----------|---------|-----|-----|-------------|-----------|------------|------------|-------------|--------------------|----------|-------------|-------------------|
 
 ## 🛠️ Tecnologías
 
